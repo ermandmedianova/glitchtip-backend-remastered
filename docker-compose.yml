@@ -20,6 +20,10 @@ x-volumes: &default-volumes
 services:
   postgres:
     image: postgres:17
+    ports:
+      - "5432:5432"
+    volumes:
+      - /tmp/glitchtip-postgres/data:/var/lib/postgresql/data
     environment:
       POSTGRES_HOST_AUTH_METHOD: "trust"
   redis:
