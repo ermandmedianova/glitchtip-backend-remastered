@@ -1,0 +1,54 @@
+{
+  "message": "hi",
+  "level": "info",
+  "event_id": "6600a066e64b4caf8ed7ec5af64ac4bd",
+  "timestamp": "2019-12-01T01:44:14.622752Z",
+  "breadcrumbs": [
+    {
+      "type": "subprocess",
+      "category": "subprocess",
+      "message": "'git log --pretty=format:%ct --quiet -1 HEAD'",
+      "data": {
+        "subprocess.cwd": "/usr/local/lib/python3.7/site-packages/django"
+      },
+      "timestamp": "2019-12-01T01:42:46.675888Z"
+    },
+    {
+      "type": "subprocess",
+      "category": "subprocess",
+      "message": "/sbin/ldconfig -p",
+      "data": {},
+      "timestamp": "2019-12-01T01:42:46.691756Z"
+    }
+  ],
+  "contexts": {
+    "runtime": {
+      "name": "CPython",
+      "version": "3.7.5",
+      "build": "3.7.5 (default, Oct 21 2019, 20:13:45) \n[GCC 8.3.0]"
+    }
+  },
+  "modules": {
+    "django": "2.2.7"
+  },
+  "extra": { "sys.argv": ["./manage.py", "shell"] },
+  "release": "dev",
+  "server_name": "b0e637722318",
+  "sdk": {
+    "name": "sentry.python",
+    "version": "0.12.3",
+    "packages": [{ "name": "pypi:sentry-sdk", "version": "0.12.3" }],
+    "integrations": [
+      "argv",
+      "atexit",
+      "dedupe",
+      "django",
+      "excepthook",
+      "logging",
+      "modules",
+      "stdlib",
+      "threading"
+    ]
+  },
+  "platform": "python"
+}
