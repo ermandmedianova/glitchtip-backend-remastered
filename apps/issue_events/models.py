@@ -92,7 +92,7 @@ class Issue(SoftDeleteModel):
     count = models.PositiveIntegerField(default=1, editable=False)
     first_seen = models.DateTimeField(default=timezone.now, db_index=True)
     last_seen = models.DateTimeField(default=timezone.now, db_index=True)
-
+    ai_analysis = models.TextField(null=True, blank=True)
     objects = DeferedFieldManager(["search_vector"])
 
     class Meta:

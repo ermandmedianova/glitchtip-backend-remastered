@@ -80,6 +80,7 @@ class IssueSchema(ModelSchema):
             "title",
             "metadata",
             "culprit",
+            "ai_analysis",
         ]
         alias_generator = to_camel_with_lower_id
         coerce_numbers_to_str = True
