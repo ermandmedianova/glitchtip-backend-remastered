@@ -10,7 +10,8 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /code
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
-COPY pyproject.toml uv.lock /code/
+COPY pyproject.toml /code/
+RUN uv lock
 RUN uv sync --frozen --no-install-project $(test "$IS_CI" = "True" && echo "--no-dev")
 
 FROM python:3.13-slim
