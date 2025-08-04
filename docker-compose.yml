@@ -1,17 +1,3 @@
-x-environment: &default-environment
-  DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
-  SECRET_KEY: change_me
-  ENABLE_ORGANIZATION_CREATION: "true"
-  ENABLE_TEST_API: "true"
-  DEBUG: "true"
-  EMAIL_BACKEND: "django.core.mail.backends.console.EmailBackend"
-  ENABLE_OBSERVABILITY_API: "true"
-  #IS_LOAD_TEST: "true"
-  CELERY_WORKER_CONCURRENCY: 4
-  CELERY_WORKER_PREFETCH_MULTIPLIER: 25
-  CELERY_WORKER_POOL: "threads"
-  CELERY_SKIP_CHECKS: "true"
-
 x-depends_on: &default-depends_on
   - postgres
   - redis
@@ -41,11 +27,13 @@ services:
     volumes: *default-volumes
     ports:
       - "8000:8000"
-    environment: *default-environment
+    env_file:
+      - .env
   worker:
     build: .
     user: root
     command: bin/run-celery-with-beat.sh
     depends_on: *default-depends_on
     volumes: *default-volumes
-    environment: *default-environment
+    env_file:
+      - .env
