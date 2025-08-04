@@ -1,3 +1,4 @@
+import json
 import os
 from collections import defaultdict
 from dataclasses import dataclass
@@ -31,6 +32,7 @@ from apps.difs.tasks import event_difs_resolve_stacktrace
 from apps.environments.models import Environment, EnvironmentProject
 from apps.issue_events.constants import MAX_TAG_LENGTH, EventStatus, LogLevel
 from apps.issue_events.models import (
+    Comment,
     Issue,
     IssueEvent,
     IssueEventType,
@@ -69,7 +71,7 @@ from .schema import (
     ValueEventException,
 )
 from .utils import generate_hash, remove_bad_chars, transform_parameterized_message
-
+from .ai_analysis import generate_ai_analysis
 
 @dataclass
 class ProcessingEvent:
@@ -783,11 +785,15 @@ def process_issue_events(ingest_events: list[InterchangeIssueEvent]):
                 issue_defaults["short_id"] = cursor.fetchone()[0]
             try:
                 with transaction.atomic():
+                    
+                    exception_str:str = json.dumps(processing_event.event_data["exception"], indent=4)
+                    ai_analysis = generate_ai_analysis(exception_str)
                     issue = Issue.objects.create(
                         project_id=project_id,
                         search_vector=SearchVector(
                             Value(get_search_vector(processing_event))
                         ),
+                        ai_analysis=ai_analysis,
                         **issue_defaults,
                     )
                     new_issue_hash = IssueHash.objects.create(
@@ -1179,3 +1185,18 @@ def process_transaction_events(ingest_events: list[InterchangeTransactionEvent])
         data_stats,
         table_name="projects_transactioneventprojecthourlystatistic",
     )
+
+
+    def add_ai_comment(issue_id: int, user_id: int, text: str): 
+        try:
+            issue = Issue.objects.get(
+                id=issue_id, project__organization__users=user_id
+            )
+        except Issue.DoesNotExist:
+            raise Exception("Issue does not exist")
+
+        comment = Comment.objects.create(
+            text=text,
+            issue=issue,
+            user_id=user_id,
+        )
