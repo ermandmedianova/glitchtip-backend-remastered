@@ -7,9 +7,9 @@ def generate_ai_analysis(exception_str: str) -> str | None:
         import openai
         client = openai.OpenAI()
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model=os.getenv("OPENAI_MODEL", "gpt-4o"),
             messages=[
-                {"role": "system", "content": "You are a helpful expert assistant that analyzes exceptions and provides a detailed analysis of the issue. Always respond in markdown format."},
+                {"role": "system", "content": "You are a helpful expert assistant that analyzes exceptions and provides a detailed analysis and solution of the issue. Always respond in markdown format."},
                 {"role": "user", "content": f"Analyze the following exception and provide a detailed analysis of the issue: {exception_str}"}
             ]
         )
@@ -20,13 +20,14 @@ def generate_ai_analysis(exception_str: str) -> str | None:
         import anthropic
         client = anthropic.Anthropic()
         message = client.messages.create(
-            model="claude-3-7-sonnet-latest",
-            system="You are a helpful expert assistant that analyzes exceptions and provides a detailed analysis of the issue. Always respond in markdown format.",
+            model=os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022"),
+            system="You are a helpful expert assistant that analyzes exceptions and provides a detailed analysis and solution of the issue. Always respond in markdown format.",
             messages=[
                 {"role": "user", "content": f"Analyze the following exception and provide a detailed analysis of the issue: {exception_str}"}
-            ]
+            ],
+            max_tokens=1500
         )
         print(f"AI Response generated: {message.content}")
-        return ''.join([part["text"] for part in message.content])
+        return message.content[0].text
     print(f"No AI Response generated")
     return None
